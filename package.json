@@ -1,0 +1,30 @@
+{
+  "name": "browser-filter-select.js",
+  "version": "1.0.0",
+  "description": "可筛选的下拉框",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linfenpan/filter-select.git"
+  },
+  "keywords": [
+    "select",
+    "js"
+  ],
+  "author": "da宗熊",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linfenpan/filter-select/issues"
+  },
+  "homepage": "https://github.com/linfenpan/filter-select#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-header": "^1.8.8",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-uglify": "^2.0.0"
+  }
+}
