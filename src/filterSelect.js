@@ -188,6 +188,11 @@
 
     _bindUI: function() {
       var ctx = this, options = ctx.options;
+      var $input = ctx.$input;
+
+      function canShow() {
+        return !$input.disabled && !$input.readOnly;
+      }
 
       addEvent(ctx.$ul, 'click', function(e) {
         var target = e.srcElement || e.target,
@@ -200,29 +205,32 @@
 
       // 绑定小三角的点击
       addEvent(ctx.$ico, 'click', function() {
+        if (!canShow()) { return; }
         if (ctx.isShow) {
           ctx.hide();
         } else {
-          ctx.$input.focus();
+          $input.focus();
           ctx.show();
         }
       });
 
       // 绑定input的选中
-      addEvent(ctx.$input, 'focus', function(e) {
+      addEvent($input, 'focus', function(e) {
+        if (!canShow()) { return; }
         if (
           options.clearAtFocus
           ||
           (options.freeInput && this.value == options.placeholder)
         ) {
-          ctx.$input.value = '';
+          $input.value = '';
           ctx._showPlaceholder();
         }
         changeInput.call(this, e);
       });
 
       // 绑定input的键盘事件
-      addEvent(ctx.$input, 'keydown', function(e) {
+      addEvent($input, 'keydown', function(e) {
+        if (!canShow()) { return; }
         switch(e.keyCode){
           case 38:
             ctx.prev();
@@ -238,13 +246,17 @@
       });
 
       // input 过滤内容
-      addEvent(ctx.$input, 'input', changeInput);
+      addEvent($input, 'input', changeInput);
       // fix: 低版本Ie，不支持input事件，而又因为更改了 $input 的属性，所有导致此方法，被触发了一轮
       setTimeout(function() {
-        addEvent(ctx.$input, 'propertychange', changeInput);
+        addEvent($input, 'propertychange', changeInput);
       }, 200);
-      function changeInput(e) {
-        var value = trim(ctx.$input.value);
+      function changeInput(e, a) {
+        if (e.propertyName && e.propertyName.toLowerCase() != 'value') {
+          return;
+        }
+        if (!canShow()) { return; }
+        var value = trim($input.value);
         if (value) {
           ctx._hidePlaceholder();
         } else {
@@ -439,6 +451,10 @@
       ctx.$value.value = value;
       ctx.$select.value = value;
       attr(ctx.$select, 'data-value', value);
+    },
+
+    setDisabled: function(disabled) {
+      this.$input.disabled = disabled;
     },
 
     _listenBody: function() {
