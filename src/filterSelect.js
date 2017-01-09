@@ -102,8 +102,8 @@
     var $root = ctx.$root = document.createElement('div');
     $root.innerHTML = [
       '<div class="m-placeholder" style="display:none;"></div>',
-      '<input type="text" class="m-input" autocomplete="false" disableautocomplete value="" />',
-      '<input type="hidden" class="m-input-hidden" autocomplete="false" disableautocomplete value="" />',
+      '<input type="text" class="m-input" autocomplete="off" disableautocomplete value="" />',
+      '<input type="hidden" class="m-input-hidden" autocomplete="off" disableautocomplete value="" />',
       '<span class="m-input-ico"></span>',
       '<ul class="m-list" style="display:none;"></ul>'
     ].join('');
@@ -117,11 +117,11 @@
     ctx.$tip = getElementsByTagName($root, 'div', 0);
     ctx.$ul = getElementsByTagName($root, 'ul', 0);
 
-    ctx.init();
+    ctx._init();
   }
 
   Select.prototype = {
-    init: function() {
+    _init: function() {
       var ctx = this;
       ctx.setPlaceholder(ctx.options.placeholder);
       ctx.reset();
@@ -130,7 +130,7 @@
 
     reset: function() {
       var ctx = this;
-      ctx.index = 0;
+      ctx._index = 0;
       ctx.isShow = false;
 
       var lis = [], valueSelected, textSelected;
@@ -153,23 +153,25 @@
       ctx.$lis = getElementsByTagName(ctx.$ul, 'li');
       ctx.length = ctx.$lis.length;
 
-      ctx.$input.value = textSelected;
-      ctx.$tip.value = textSelected;
       var value = ctx.options.freeInput ? textSelected : valueSelected;
-      ctx._setValue(value);
       ctx._oldValue = value;
-      if (textSelected) {
-        ctx.setPlaceholder(textSelected);
-      } else {
+      ctx.setValue(value);
+
+      if (!textSelected) {
         ctx._showPlaceholder();
       }
 
       // fix: 浏览器的 autocomplete bug
       setTimeout(function() {
+        var options = ctx.options;
         if (ctx.$select.value != ctx.$value.value) {
-          ctx.reset();
+          if (options.freeInput) {
+            options.resetCallback(value, value);
+          } else {
+            ctx.reset();
+          }
         } else {
-          ctx.options.resetCallback(value, textSelected);
+          options.resetCallback(value, textSelected);
         }
       });
     },
@@ -198,7 +200,7 @@
         var target = e.srcElement || e.target,
           name = target.tagName.toLowerCase();
         if (name == 'li') {
-          ctx._setIndex(indexOf(ctx.$lis, target), true);
+          ctx._selectItem(target);
           ctx.hide();
         }
       });
@@ -239,7 +241,7 @@
             ctx.next();
             break;
           case 13:
-            ctx._setIndex(ctx._getActiveIndex(), true);
+            ctx._selectItem(ctx.$lis[ctx._getActiveIndex()]);
             ctx.hide();
             break;
         }
@@ -295,10 +297,13 @@
 
     _fixScroll: function() {
       var ctx = this, $ul = ctx.$ul, $lis = ctx.$lis;
-      $ul.scrollTop = $lis[0].clientHeight * ctx._getScrollIndex();
+      var index = ctx._getFirstVisibleIndex();
+      if (index >= 0) {
+        $ul.scrollTop = $lis[index].clientHeight * ctx._getScrollIndex();
+      }
     },
 
-    _setIndex: function(index, needUpdate) {
+    _setIndex: function(index) {
       var ctx = this,
         $lis = ctx.$lis,
         length = ctx._getVisibleItemCount();
@@ -334,18 +339,18 @@
       }
 
       ctx._fixScroll();
-      ctx.index = index;
+      ctx._index = index;
+    },
 
-      if (needUpdate) {
-        var text = $li.innerHTML,
-          value = attr($li, 'data-value'),
-          options = ctx.options;
-
-        ctx.$input.value = text;
-        ctx._setValue(options.freeInput ? text : value);
-        ctx.$tip.innerHTML = text;
-        ctx._hidePlaceholder();
+    _selectItem: function($li) {
+      var ctx = this, text, value;
+      if ($li) {
+        text = $li.innerHTML,
+        value = attr($li, 'data-value');
+      } else {
+        text = value = ctx.$input.value;
       }
+      ctx.setValue(ctx.options.freeInput ? text : value);
     },
 
     _getVisibleItemCount: function() {
@@ -361,7 +366,7 @@
       var ctx = this, index = -1;
       for (var i = 0; i < ctx.length; i++) {
         var $li = ctx.$lis[i];
-        if (hasClass($li, CLASS_ACTIVE) && css($li, 'display') != 'none') {
+        if (hasClass($li, CLASS_ACTIVE)) {
           return i;
         }
       }
@@ -405,11 +410,11 @@
     },
 
     next: function() {
-      return this._setIndex(this.index + 1);
+      return this._setIndex(this._index + 1);
     },
 
     prev: function() {
-      return this._setIndex(this.index - 1);
+      return this._setIndex(this._index - 1);
     },
 
     hide: function() {
@@ -435,7 +440,7 @@
       ctx.isShow = true;
 
       // 索引修正为滚动索引
-      ctx.index = ctx._getScrollIndex();
+      ctx._index = ctx._getScrollIndex();
       ctx._fixScroll();
       // 绑定 body 元素的点击，隐藏掉$ul
       ctx._listenBody();
@@ -449,9 +454,14 @@
     setValue: function(value) {
       var ctx = this;
       ctx._setValue(value);
+      if (value) {
+        ctx._hidePlaceholder();
+      }
+
       for (var i = 0, max = ctx.length; i < max; i++) {
-        var $li = ctx.$lis[i], text = attr($li, 'data-value');
-        if (text == value) {
+        var $li = ctx.$lis[i], _value = attr($li, 'data-value');
+        if (_value == value) {
+          var text = trim($li.innerHTML);
           ctx.$input.value = text;
           ctx.setPlaceholder(text);
           return;
