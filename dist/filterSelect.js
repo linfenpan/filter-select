@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.0 update:2017/0/8 git:https://github.com/linfenpan/filter-select*/
+/*! by da宗熊 MIT v1.0.0 update:2017/0/9 git:https://github.com/linfenpan/filter-select*/
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
 })(window, 'FilterSelect', function(win) {
@@ -92,6 +92,9 @@
       callback: function(id, val) {
         // console.log('选中', id, val);
       },
+      resetCallback: function(id) {
+        // 初始化完毕
+      },
       clearAtFocus: true,
       freeInput: false,
       placeholder: '请选择'
@@ -99,13 +102,14 @@
 
     var $root = ctx.$root = document.createElement('div');
     $root.innerHTML = [
-      '<div class="m-placeholder"></div>',
-      '<input type="text" class="m-input" />',
-      '<input type="hidden" class="m-input-hidden" />',
+      '<div class="m-placeholder" style="display:none;"></div>',
+      '<input type="text" class="m-input" autocomplete="false" disableautocomplete value="" />',
+      '<input type="hidden" class="m-input-hidden" autocomplete="false" disableautocomplete value="" />',
       '<span class="m-input-ico"></span>',
-      '<ul class="m-list"></ul>'
+      '<ul class="m-list" style="display:none;"></ul>'
     ].join('');
     addClass($root, 'm-input-select');
+    attr($root, 'autocomplete', 'off');
     $select.parentNode.insertBefore($root, $select);
 
     ctx.$input = getElementsByTagName($root, 'input', 0);
@@ -133,7 +137,8 @@
       var lis = [], valueSelected, textSelected;
       forEach(getElementsByTagName(ctx.$select, 'option'), function($option) {
         var text = trim($option.innerHTML), value = $option.value;
-        value = typeof value === NOT_DEFINED ? text : value;
+        // fix: ie7下，option.value如果没有设置，全部都是空; 其它浏览器下，则是 option.text 的值
+        value = !value && ($option.outerHTML && !/\svalue=/i.test($option.outerHTML)) ? text : value;
         lis.push(
           '<li class="m-list-item" data-value="'+ value +'">'+ text +'</li>'
         );
@@ -150,11 +155,24 @@
       ctx.length = ctx.$lis.length;
 
       ctx.$input.value = textSelected;
-      ctx.$value.value = ctx.options.freeInput ? textSelected : valueSelected;
       ctx.$tip.value = textSelected;
-      if (valueSelected) {
+      var value = ctx.options.freeInput ? textSelected : valueSelected;
+      ctx.setValue(value);
+      ctx._oldValue = value;
+      if (textSelected) {
         ctx.setPlaceholder(textSelected);
+      } else {
+        ctx._showPlaceholder();
       }
+
+      // fix: 浏览器的 autocomplete bug
+      setTimeout(function() {
+        if (ctx.$select.value != ctx.$value.value) {
+          ctx.reset();
+        } else {
+          ctx.options.resetCallback(value, textSelected);
+        }
+      });
     },
 
     setPlaceholder: function(text) {
@@ -222,14 +240,18 @@
 
       // input 过滤内容
       addEvent(ctx.$input, 'input', changeInput);
-      addEvent(ctx.$input, 'propertychange', changeInput);
+      // fix: 低版本Ie，不支持input事件，而又因为更改了 $input 的属性，所有导致此方法，被触发了一轮
+      setTimeout(function() {
+        addEvent(ctx.$input, 'propertychange', changeInput);
+      }, 200);
       function changeInput(e) {
-        if (this.value) {
+        var value = trim(ctx.$input.value);
+        if (value) {
           ctx._hidePlaceholder();
         } else {
           ctx._showPlaceholder();
         }
-        ctx.filterByValue(this.value);
+        ctx.filterByValue(value);
         ctx.show();
       }
     },
@@ -309,7 +331,7 @@
           options = ctx.options;
 
         ctx.$input.value = text;
-        ctx.$value.value = options.freeInput ? text : value;
+        ctx.setValue(options.freeInput ? text : value);
         ctx.$tip.innerHTML = text;
         ctx._hidePlaceholder();
       }
@@ -383,8 +405,8 @@
       var ctx = this,
         text = trim(ctx.$input.value);;
       // 如果是自由输入模式，就保留输入值，否则就还原为上一次的值
-      if (ctx.options.freeInput) {
-        ctx.$value.value = text;
+      if (ctx.options.freeInput && text) {
+        ctx.setValue(text);
         ctx.setPlaceholder(text);
       } else {
         ctx.$input.value = ctx.$tip.innerHTML;
@@ -411,6 +433,13 @@
     getValue: function() {
       var ctx = this, options = ctx.options;
       return trim(options.freeInput ? ctx.$input.value : ctx.$value.value);
+    },
+
+    setValue: function(value) {
+      var ctx = this;
+      ctx.$value.value = value;
+      ctx.$select.value = value;
+      attr(ctx.$select, 'data-value', value);
     },
 
     _listenBody: function() {

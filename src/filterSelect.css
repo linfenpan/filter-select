@@ -1,10 +1,10 @@
 .m-input-select { position: relative; display: inline-block; *display: inline; *zoom: 1; -webkit-user-select: none; }
 .m-input-select ul, .m-input-select li, .m-input-select input { padding: 0; margin: 0; }
-.m-input-select .m-placeholder { overflow: hidden; position: absolute; top: 0; left: 0; right: 0; bottom: 0; margin-right: 22px; color: #bbb; }
-.m-input-select .m-input { position: relative; padding-right: 22px; background: transparent; }
-.m-input-select .m-placeholder, .m-input-select .m-input { font-size: 14px; line-height: 22px; border: 1px solid #666; }
+.m-input-select .m-placeholder { display: none; overflow: hidden; position: absolute; top: 0; *top: 1px; left: 0; right: 0; margin-right: 22px; color: #bbb; }
+.m-input-select .m-input { position: relative; padding-right: 22px; background: transparent; outline: none; vertical-align: top; }
+.m-input-select .m-placeholder, .m-input-select .m-input { box-sizing: border-box; height: 22px; line-height: 22px; font-size: 14px; border: 1px solid #666; }
 .m-input-select .m-placeholder { border-right: 0 none; }
-.m-input-select .m-input-ico {position:absolute;right:0;top:0;width:22px;height:100%;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAATElEQVQoU2NkIBEwkqiegTwNcXFx/4m1CW4DMZoWLVrEiOIkfJpAikGuwPADNk0wxVg1gASRNSErxqkBpgldMV4NuEKNvHggNg5A6gBo4xYmyyXcLAAAAABJRU5ErkJggg==) no-repeat 50% 50%;}
+.m-input-select .m-input-ico { position: absolute; right: 0; top: 0; width: 22px; height: 100%; background: url(./filter-select-icon.png) no-repeat 50% 50%; }
 .m-input-select .m-list { display: none; position: absolute; z-index: 1; top: 100%; left: 0; right: 0; max-width: 100%; max-height: 250px; overflow: auto; border-bottom: 1px solid #ddd; }
 .m-input-select .m-list-item { cursor: default; padding: 5px; margin-top: -1px; list-style: none; background: #fff; border:1px solid #ddd; border-bottom: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .m-input-select .m-list-item:hover { background: #2D95FF; }
