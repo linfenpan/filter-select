@@ -157,7 +157,7 @@
       ctx.$input.value = textSelected;
       ctx.$tip.value = textSelected;
       var value = ctx.options.freeInput ? textSelected : valueSelected;
-      ctx.setValue(value);
+      ctx._setValue(value);
       ctx._oldValue = value;
       if (textSelected) {
         ctx.setPlaceholder(textSelected);
@@ -343,7 +343,7 @@
           options = ctx.options;
 
         ctx.$input.value = text;
-        ctx.setValue(options.freeInput ? text : value);
+        ctx._setValue(options.freeInput ? text : value);
         ctx.$tip.innerHTML = text;
         ctx._hidePlaceholder();
       }
@@ -418,7 +418,7 @@
         text = trim(ctx.$input.value);;
       // 如果是自由输入模式，就保留输入值，否则就还原为上一次的值
       if (ctx.options.freeInput && text) {
-        ctx.setValue(text);
+        ctx._setValue(text);
         ctx.setPlaceholder(text);
       } else {
         ctx.$input.value = ctx.$tip.innerHTML;
@@ -448,6 +448,22 @@
     },
 
     setValue: function(value) {
+      var ctx = this;
+      ctx._setValue(value);
+      for (var i = 0, max = ctx.length; i < max; i++) {
+        var $li = ctx.$lis[i], text = attr($li, 'data-value');
+        if (text == value) {
+          ctx.$input.value = text;
+          ctx.setPlaceholder(text);
+          return;
+        }
+      }
+      // 如果到这个逻辑，说明了 value 值，不存在 data-value 属性中
+      ctx.$input.value = value;
+      ctx.setPlaceholder(value);
+    },
+
+    _setValue: function(value) {
       var ctx = this;
       ctx.$value.value = value;
       ctx.$select.value = value;
