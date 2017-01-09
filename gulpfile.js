@@ -8,7 +8,7 @@ const replace = require('gulp-replace');
 
 const today = new Date();
 const pkg = require('./package.json');
-const banner = `/*! by da宗熊 MIT v${pkg.version} update:${today.getFullYear()}/${today.getMonth()}/${today.getDate()} git:https://github.com/linfenpan/filter-select*/\n`;
+const banner = `/*! by da宗熊 MIT v${pkg.version} update:${today.getFullYear()}/${today.getMonth()}/${today.getDate()} git:https://github.com/linfenpan/filter-select */\n`;
 
 const replaceMap = {};
 let replaceIndex = 1;
