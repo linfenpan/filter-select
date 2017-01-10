@@ -458,18 +458,26 @@
         ctx._hidePlaceholder();
       }
 
+      var hasFindInSelect = false;
       for (var i = 0, max = ctx.length; i < max; i++) {
         var $li = ctx.$lis[i], _value = attr($li, 'data-value');
         if (_value == value) {
           var text = trim($li.innerHTML);
           ctx.$input.value = text;
           ctx.setPlaceholder(text);
-          return;
+          hasFindInSelect = true;
+          break;
         }
       }
-      // 如果到这个逻辑，说明了 value 值，不存在 data-value 属性中
-      ctx.$input.value = value;
-      ctx.setPlaceholder(value);
+      // value 值，不存在 data-value 属性中
+      if (!hasFindInSelect) {
+        ctx.$input.value = value;
+        ctx.setPlaceholder(value);
+      }
+
+      if (ctx._oldValue != value) {
+        ctx._doCallback();
+      }
     },
 
     _setValue: function(value) {
