@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>可输入下拉框v2.0</title>
+  <style>
+    * { padding: 0; margin: 0;  }
+    .m-input-select, .button { vertical-align: middle; }
+  </style>
+  <link href="./dist/filterSelect.css" rel="stylesheet" />
+</head>
+<body>
+  <div style="height:500px;margin:20px;">
+    <!-- option必须带有 value 的值 -->
+    <select id="magicsuggest" autocomplete="off">
+      <option>物种生存1</option>
+      <option>天天暴走</option>
+      <option>叉神2</option>
+      <option>abc3</option>
+      <option>bbc1</option>
+      <option>dds2</option>
+      <option>奇怪3</option>
+      <option>背包1</option>
+      <option>浏览器2</option>
+      <option>SKD3</option>
+      <option>你好a</option>
+      <option>学生big</option>
+      <option>老师c</option>
+      <option>宠物d</option>
+      <option>老人</option>
+      <option>物理数据</option>
+      <option>天才</option>
+      <option>生物老师</option>
+      <option>宝宝</option>
+      <option>齐心怪状</option>
+    </select>
+    <input class="button" type="button" value="点击" onclick="console.log(111, s.getValue())" />
+    <input type="text" autocomplete="off" />
+  </div>
+  <div style="height:1000px;"></div>
+  <script src="./dist/filterSelect.min.js"></script>
+  <script>
+    var s = new FilterSelect(document.getElementById('magicsuggest'), {
+      callback: function(key, text) {
+        console.log('选中:' + key);
+      },
+      resetCallback: function(key, text) {
+        console.log('初始化完毕:' + key + ',' + text);
+      },
+      freeInput: false,
+      clearAtFocus: true
+    });
+
+    // 通过 s.getValue() 获取到正确的值
+  </script>
+</body>
+</html>

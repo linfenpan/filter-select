@@ -1,8 +1,6 @@
 var NOT_DEFINED = void 0;
 
-function noop() {
-
-}
+function noop() {}
 
 function getElementsByTagName($r, tag, i) {
   var $elems = $r.getElementsByTagName(tag);

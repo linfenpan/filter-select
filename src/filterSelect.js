@@ -1,3 +1,4 @@
+// 旧版本，不维护的!!~~~
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
 })(window, 'FilterSelect', function(win) {

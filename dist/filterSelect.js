@@ -1,4 +1,5 @@
-/*! by da宗熊 MIT v1.0.0 update:2017/0/12 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.0 old version  update:2017/1/12 git:https://github.com/linfenpan/filter-select */
+// 旧版本，不维护的!!~~~
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
 })(window, 'FilterSelect', function(win) {
