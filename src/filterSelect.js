@@ -149,6 +149,7 @@
       ctx.$ul.innerHTML = lis.join('');
       css(ctx.$ul, { display: 'none' });
       css(ctx.$select, { display: 'none' });
+      attr(ctx.$select, 'autocomplete', 'off');
 
       ctx.$lis = getElementsByTagName(ctx.$ul, 'li');
       ctx.length = ctx.$lis.length;
@@ -161,19 +162,7 @@
         ctx._showPlaceholder();
       }
 
-      // fix: 浏览器的 autocomplete bug
-      setTimeout(function() {
-        var options = ctx.options;
-        if (ctx.$select.value != ctx.$value.value) {
-          if (options.freeInput) {
-            options.resetCallback(value, value);
-          } else {
-            ctx.reset();
-          }
-        } else {
-          options.resetCallback(value, textSelected);
-        }
-      });
+      ctx.options.resetCallback(value, textSelected);
     },
 
     setPlaceholder: function(text) {
@@ -225,7 +214,6 @@
           (options.freeInput && this.value == options.placeholder)
         ) {
           $input.value = '';
-          ctx._showPlaceholder();
         }
         changeInput.call(this, e);
       });
@@ -272,6 +260,7 @@
     // 过滤列表
     filterByValue: function(value) {
       var ctx = this,
+        options = ctx.options,
         $list = ctx.$lis;
       value = trim(value || '').toLowerCase();
 
@@ -298,9 +287,7 @@
     _fixScroll: function() {
       var ctx = this, $ul = ctx.$ul, $lis = ctx.$lis;
       var index = ctx._getFirstVisibleIndex();
-      if (index >= 0) {
-        $ul.scrollTop = $lis[index].clientHeight * ctx._getScrollIndex();
-      }
+      $ul.scrollTop = index >= 0 ? $lis[index].clientHeight * ctx._getScrollIndex() : 0;
     },
 
     _setIndex: function(index) {
@@ -343,14 +330,19 @@
     },
 
     _selectItem: function($li) {
-      var ctx = this, text, value;
+      var ctx = this, freeInput = ctx.options.freeInput, text, value;
       if ($li) {
         text = $li.innerHTML,
         value = attr($li, 'data-value');
+        var $curLi = ctx.$lis[ctx._getActiveIndex()];
+        if ($curLi) {
+          removeClass($curLi, CLASS_ACTIVE);
+        }
+        addClass($li, CLASS_ACTIVE);
       } else {
-        text = value = ctx.$input.value;
+        text = value = ctx.getValue();
       }
-      ctx.setValue(ctx.options.freeInput ? text : value);
+      ctx.setValue(freeInput ? text : value);
     },
 
     _getVisibleItemCount: function() {
@@ -374,7 +366,10 @@
     },
 
     _getSelectIndex: function() {
-      var ctx = this, index = -1, value = ctx.getValue();
+      var ctx = this,
+        index = -1,
+        // 不要使用 ctx.getValue()，因为 freeInput 下，focus 时，$input.value 会被清空
+        value = ctx.$value.value;
       for (var i = 0; i < ctx.length; i++) {
         var $li = ctx.$lis[i];
         if (value == attr($li, 'data-value') && css($li, 'display') != 'none') {
@@ -395,7 +390,7 @@
           indexScroll++;
         }
       }
-      return indexScroll;
+      return 0;
     },
 
     _getFirstVisibleIndex: function() {
@@ -492,22 +487,22 @@
     },
 
     _listenBody: function() {
-      var ctx = this;
+      var ctx = this, eventName = 'mouseup';
       var $body = document.getElementsByTagName('body')[0];
       function hide(e) {
         if (!ctx.$ul) {
-          removeEvent($body, 'click', hide);
+          removeEvent($body, eventName, hide);
           return;
         }
         var target = e.srcElement || e.target;
         if (target != ctx.$input && target != ctx.$ico) {
           ctx.hide();
-          removeEvent($body, 'click', hide);
+          removeEvent($body, eventName, hide);
         }
       }
       function listen() {
-        removeEvent($body, 'click', hide);
-        addEvent($body, 'click', hide);
+        removeEvent($body, eventName, hide);
+        addEvent($body, eventName, hide);
       }
       ctx._listenBody = listen;
       listen();
