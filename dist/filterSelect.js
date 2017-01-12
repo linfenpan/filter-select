@@ -496,7 +496,10 @@
           return;
         }
         var target = e.srcElement || e.target;
-        if (target != ctx.$input && target != ctx.$ico) {
+        if (target.tagName.toLowerCase() === 'li') {
+          target = target.parentNode;
+        }
+        if (target != ctx.$input && target != ctx.$ico && target != ctx.$ul) {
           ctx.hide();
           removeEvent($body, eventName, hide);
         }
