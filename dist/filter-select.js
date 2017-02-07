@@ -1,19 +1,19 @@
-/*! by da宗熊 MIT v1.0.0 update:2017/1/12 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.0 update:2017/2/7 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
 })(window, 'FilterSelect', function(win) {
 
-var NOT_f1 = void 0;
+var NOT_DEFINED = void 0;
 
 function noop() {}
 
 function getElementsByTagName($r, tag, i) {
   var $elems = $r.getElementsByTagName(tag);
-  return i === NOT_f1 ? $elems : $elems[i];
+  return i === NOT_DEFINED ? $elems : $elems[i];
 }
 function attr($r, name, val) {
-  if (val === NOT_f1) {
+  if (val === NOT_DEFINED) {
     return $r.getAttribute(name);
   } else {
     $r.setAttribute(name, val);
@@ -86,9 +86,7 @@ function removeEvent($r, evt, fn) {
   }
 }
 
-
-
-var CLASS_f2 = 'm-list-item-active';
+var CLASS_ACTIVE = 'm-list-item-active';
 
 function AutoComplete($root, options) {
   var ctx = this;
@@ -125,26 +123,26 @@ function AutoComplete($root, options) {
   ctx.$ico = getElementsByTagName($root, 'span', 0);
   ctx.$ul = getElementsByTagName($root, 'ul', 0);
 
-  ctx._f3 = options.minIndex;
-  ctx._f4 = options.defaultText;
-  ctx._f5 = options.defaultValue;
+  ctx._minIndex = options.minIndex;
+  ctx._oldText = options.defaultText;
+  ctx._oldValue = options.defaultValue;
 
-  ctx._f6();
+  ctx._init();
 }
 
 AutoComplete.prototype = {
-  _f6: function() {
+  _init: function() {
     var ctx = this;
     ctx.reset();
-    ctx._f7();
+    ctx._bindUI();
   },
 
   reset: function() {
     var ctx = this;
-    ctx._f8 = 0;
+    ctx._index = 0;
     ctx.isShow = false;
     ctx.setPlaceholder(ctx.options.placeholder);
-    ctx._f9();
+    ctx._showPlaceholder();
     css(ctx.$ul, { display: 'none' });
 
     var options = ctx.options,
@@ -161,15 +159,15 @@ AutoComplete.prototype = {
     this.$tip.innerHTML = text;
   },
 
-  _f10: function() {
+  _hidePlaceholder: function() {
     css(this.$tip, { display: 'none' });
   },
 
-  _f9: function() {
+  _showPlaceholder: function() {
     css(this.$tip, { display: 'block' });
   },
 
-  _f7: function() {
+  _bindUI: function() {
     var ctx = this, options = ctx.options;
     var $input = ctx.$input;
 
@@ -181,7 +179,7 @@ AutoComplete.prototype = {
       var target = e.srcElement || e.target,
         name = target.tagName.toLowerCase();
       if (name == 'li') {
-        ctx._f11(target);
+        ctx._selectItem(target);
         ctx.hide();
       }
     });
@@ -223,14 +221,14 @@ AutoComplete.prototype = {
           hadChagned = true;
           break;
         case 13:
-          ctx._f11(ctx.$lis[ctx._f12()]);
+          ctx._selectItem(ctx.$lis[ctx._getActiveIndex()]);
           ctx.hide();
           shouldStopDefault = true;
           break;
       }
 
       if (hadChagned) {
-        options.callbackChange(ctx._f8);
+        options.callbackChange(ctx._index);
       }
 
       if (hadChagned || shouldStopDefault) {
@@ -256,20 +254,20 @@ AutoComplete.prototype = {
       if (!canShow()) { return; }
       var value = trim($input.value);
       if (value) {
-        ctx._f10();
+        ctx._hidePlaceholder();
       } else {
-        ctx._f9();
+        ctx._showPlaceholder();
       }
 
-      ctx._f13(value);
-      ctx._f14();
+      ctx._buildLi(value);
+      ctx._fixIndex();
       if (!ctx.isShow) {
         ctx.show();
       }
     }
   },
 
-  _f13: function(value) {
+  _buildLi: function(value) {
     var ctx = this, options = ctx.options, freeInput = options.freeInput;
     var list = [];
     options.data.call(this, value, function(datas) {
@@ -283,34 +281,34 @@ AutoComplete.prototype = {
     });
   },
 
-  _f14: function(indexSelected) {
+  _fixIndex: function(indexSelected) {
     var ctx = this;
     // 索引修正为滚动索引
-    indexSelected = indexSelected || ctx._f15();
+    indexSelected = indexSelected || ctx._getSelectIndex();
     if (ctx.options.selectFirst) {
       indexSelected = indexSelected < 0 ? 0 : indexSelected;
     }
-    ctx._f8 = indexSelected;
+    ctx._index = indexSelected;
 
-    var $li = ctx.$lis[ctx._f8];
+    var $li = ctx.$lis[ctx._index];
     if ($li) {
-      addClass($li, CLASS_f2);
-      ctx._f16();
+      addClass($li, CLASS_ACTIVE);
+      ctx._fixScroll();
     }
   },
 
-  _f16: function() {
+  _fixScroll: function() {
     var ctx = this, $ul = ctx.$ul, $lis = ctx.$lis;
-    var index = ctx._f12();
+    var index = ctx._getActiveIndex();
     $ul.scrollTop = index >= 0 && $lis[0] ? $lis[0].clientHeight * index : 0;
   },
 
-  _f17: function(index) {
+  _setIndex: function(index) {
     var ctx = this,
       $lis = ctx.$lis,
       length = $lis.length;
 
-    var minIndex = ctx._f3;
+    var minIndex = ctx._minIndex;
 
     if (index <= minIndex) {
       index = minIndex;
@@ -319,21 +317,21 @@ AutoComplete.prototype = {
     }
 
     // 找出当前active的元素，删掉 active
-    var indexCurrent = ctx._f12();
+    var indexCurrent = ctx._getActiveIndex();
     if (indexCurrent >= 0) {
-      removeClass($lis[indexCurrent], CLASS_f2);
+      removeClass($lis[indexCurrent], CLASS_ACTIVE);
     }
 
     // 然后找出下一个需要添加 active 的元素
     var $li = $lis[index];
     if ($li) {
-      addClass($li, CLASS_f2);
-      ctx._f16();
+      addClass($li, CLASS_ACTIVE);
+      ctx._fixScroll();
     }
-    ctx._f8 = index;
+    ctx._index = index;
   },
 
-  _f11: function($li) {
+  _selectItem: function($li) {
     var ctx = this, text, value;
     if ($li) {
       text = $li.innerHTML,
@@ -348,18 +346,18 @@ AutoComplete.prototype = {
     ctx.setValue(value);
   },
 
-  _f12: function() {
+  _getActiveIndex: function() {
     var ctx = this, index = -1;
     for (var i = 0; i < ctx.length; i++) {
       var $li = ctx.$lis[i];
-      if (hasClass($li, CLASS_f2)) {
+      if (hasClass($li, CLASS_ACTIVE)) {
         return i;
       }
     }
     return index;
   },
 
-  _f15: function() {
+  _getSelectIndex: function() {
     var ctx = this,
       index = -1,
       value = ctx.getValue();
@@ -373,25 +371,25 @@ AutoComplete.prototype = {
   },
 
   next: function() {
-    return this._f17(this._f8 + 1);
+    return this._setIndex(this._index + 1);
   },
 
   prev: function() {
-    return this._f17(this._f8 - 1);
+    return this._setIndex(this._index - 1);
   },
 
   hide: function() {
     var ctx = this;
 
     css(ctx.$ul, { display: 'none' });
-    ctx._f10();
+    ctx._hidePlaceholder();
 
     if (ctx.options.resetOnHide) {
       ctx.setValue(ctx.$value.value);
     }
 
-    ctx._f18();
-    ctx._f19 && ctx._f19();
+    ctx._doCallback();
+    ctx._listenBodyRemove && ctx._listenBodyRemove();
     ctx.isShow && ctx.options.callbackHide.call(ctx);
     ctx.isShow = false;
   },
@@ -401,50 +399,58 @@ AutoComplete.prototype = {
     css(ctx.$ul, { display: 'block' });
 
     // 绑定 body 元素的点击，隐藏掉$ul
-    ctx._f20();
+    ctx._listenBody();
     !ctx.isShow && ctx.options.callbackShow.call(ctx);
     ctx.isShow = true;
   },
 
   getValue: function() {
-    return trim(this.$value.value);
+    return this.$value.value;
   },
 
   setValue: function(value) {
     var ctx = this;
     ctx.$value.value = value;
     if (value) {
-      ctx._f10();
+      ctx._hidePlaceholder();
     }
 
-    if (ctx.$lis) {
-      var $curLi = ctx.$lis[ctx._f12()];
-      if ($curLi) {
-        removeClass($curLi, CLASS_f2);
+    if (ctx.length == 0 && !ctx.options.freeInput || value === '') {
+      var html = ctx.$tip.innerHTML;
+      if (ctx.options.freeInput && value === '') {
+        ctx.$value.value = html;
+      }
+      ctx._setText(html);
+    } else {
+      if (ctx.$lis) {
+        var $curLi = ctx.$lis[ctx._getActiveIndex()];
+        if ($curLi) {
+          removeClass($curLi, CLASS_ACTIVE);
+        }
+      }
+
+      var hasFindInLi = false;
+      for (var i = 0, max = ctx.length; i < max; i++) {
+        var $li = ctx.$lis[i], _value = attr($li, 'data-value');
+        if (_value == value) {
+          addClass($li, CLASS_ACTIVE);
+          ctx._setText(trim($li.innerHTML));
+          hasFindInLi = true;
+          break;
+        }
+      }
+      // value 值，不存在 data-value 属性中
+      if (!hasFindInLi) {
+        ctx._setText(value);
       }
     }
 
-    var hasFindInLi = false;
-    for (var i = 0, max = ctx.length; i < max; i++) {
-      var $li = ctx.$lis[i], _f21 = attr($li, 'data-value');
-      if (_f21 == value) {
-        addClass($li, CLASS_f2);
-        ctx._f22(trim($li.innerHTML));
-        hasFindInLi = true;
-        break;
-      }
-    }
-    // value 值，不存在 data-value 属性中
-    if (!hasFindInLi) {
-      ctx._f22(value);
-    }
-
-    if (ctx._f5 != value) {
-      ctx._f18();
+    if (ctx._oldValue != value) {
+      ctx._doCallback();
     }
   },
 
-  _f22: function(text) {
+  _setText: function(text) {
     var ctx = this, $input = ctx.$input, placeholder = ctx.options.placeholder;
     if (text === placeholder) {
       text = '';
@@ -453,7 +459,7 @@ AutoComplete.prototype = {
     }
     $input.value = text;
     ctx.setPlaceholder(placeholder);
-    text ? ctx._f10() : ctx._f9();
+    text ? ctx._hidePlaceholder() : ctx._showPlaceholder();
   },
 
   setDisabled: function(disabled) {
@@ -465,7 +471,7 @@ AutoComplete.prototype = {
     return $input.disabled || $input.readOnly;
   },
 
-  _f20: function() {
+  _listenBody: function() {
     var ctx = this, eventName = 'mouseup';
     var $body = document.getElementsByTagName('body')[0];
     function remove() {
@@ -488,16 +494,16 @@ AutoComplete.prototype = {
       remove();
       addEvent($body, eventName, hide);
     }
-    ctx._f19 = remove;
-    ctx._f20 = listen;
+    ctx._listenBodyRemove = remove;
+    ctx._listenBody = listen;
     listen();
   },
 
-  _f18: function() {
+  _doCallback: function() {
     var ctx = this,
       value = ctx.getValue();
-    if (ctx._f5 !== value) {
-      ctx._f5 = value;
+    if (ctx._oldValue !== value) {
+      ctx._oldValue = value;
       ctx.options.callbackSelect(value, trim(ctx.$input.value));
     }
   }
@@ -509,11 +515,11 @@ function FilterSelect($select, options) {
   var ctx = this;
   ctx.$select = $select;
   ctx.options = options || {};
-  this._f6();
+  this._init();
 }
 
 FilterSelect.prototype = {
-  _f6: function() {
+  _init: function() {
     var ctx = this;
     ctx.update();
   },
@@ -539,11 +545,11 @@ FilterSelect.prototype = {
       }
     });
 
-    ctx._f23 = list;
-    ctx._f24(valueSelected || '');
+    ctx._list = list;
+    ctx._buildAutoComplete(valueSelected || '');
   },
-  _f24: function(valueSelected) {
-    var ctx = this, auto = ctx._f25;
+  _buildAutoComplete: function(valueSelected) {
+    var ctx = this, auto = ctx._auto;
 
     if (!auto) {
       var $root = ctx.$root = document.createElement('div');
@@ -553,9 +559,9 @@ FilterSelect.prototype = {
       addClass($root, '.m-inline-select');
 
       var options = ctx.options;
-      ctx._f25 = auto = new AutoComplete($root, merge({
+      ctx._auto = auto = new AutoComplete($root, merge({
         data: options.data || function(value, callback) {
-          var result = [], datas = ctx._f23;
+          var result = [], datas = ctx._list;
           for (var i = 0, max = datas.length; i < max; i++) {
             var item = datas[i];
             if (item.value.indexOf(value) >= 0) {
@@ -577,16 +583,16 @@ FilterSelect.prototype = {
     auto.setValue(valueSelected);
   },
   getValue: function() {
-    return this._f25.getValue();
+    return this._auto.getValue();
   },
   setValue: function(val) {
-    this._f25.setValue(val);
+    this._auto.setValue(val);
   },
   show: function() {
-    this._f25.show();
+    this._auto.show();
   },
   hide: function() {
-    this._f25.hide();
+    this._auto.hide();
   }
 };
 

@@ -16,7 +16,7 @@
     <input type="text" autocomplete="off" />
   </div>
   <div style="height:400px;"></div>
-  <script src="./dist/auto-complete.min.js"></script>
+  <script src="./dist/auto-complete.js"></script>
   <script>
     var data = [
       { id: 1, value: '天天1' },
@@ -64,7 +64,7 @@
       callbackHide: function() {
         console.log('hide');
       },
-      freeInput: false,
+      freeInput: true,
       selectFirst: false,
       clearAtFocus: true
     });

@@ -1,5 +1,3 @@
-
-
 var CLASS_ACTIVE = 'm-list-item-active';
 
 function AutoComplete($root, options) {
@@ -319,7 +317,7 @@ AutoComplete.prototype = {
   },
 
   getValue: function() {
-    return trim(this.$value.value);
+    return this.$value.value;
   },
 
   setValue: function(value) {
@@ -329,26 +327,34 @@ AutoComplete.prototype = {
       ctx._hidePlaceholder();
     }
 
-    if (ctx.$lis) {
-      var $curLi = ctx.$lis[ctx._getActiveIndex()];
-      if ($curLi) {
-        removeClass($curLi, CLASS_ACTIVE);
+    if (ctx.length == 0 && !ctx.options.freeInput || value === '') {
+      var html = ctx.$tip.innerHTML;
+      if (ctx.options.freeInput && value === '') {
+        ctx.$value.value = html;
       }
-    }
+      ctx._setText(html);
+    } else {
+      if (ctx.$lis) {
+        var $curLi = ctx.$lis[ctx._getActiveIndex()];
+        if ($curLi) {
+          removeClass($curLi, CLASS_ACTIVE);
+        }
+      }
 
-    var hasFindInLi = false;
-    for (var i = 0, max = ctx.length; i < max; i++) {
-      var $li = ctx.$lis[i], _value = attr($li, 'data-value');
-      if (_value == value) {
-        addClass($li, CLASS_ACTIVE);
-        ctx._setText(trim($li.innerHTML));
-        hasFindInLi = true;
-        break;
+      var hasFindInLi = false;
+      for (var i = 0, max = ctx.length; i < max; i++) {
+        var $li = ctx.$lis[i], _value = attr($li, 'data-value');
+        if (_value == value) {
+          addClass($li, CLASS_ACTIVE);
+          ctx._setText(trim($li.innerHTML));
+          hasFindInLi = true;
+          break;
+        }
       }
-    }
-    // value 值，不存在 data-value 属性中
-    if (!hasFindInLi) {
-      ctx._setText(value);
+      // value 值，不存在 data-value 属性中
+      if (!hasFindInLi) {
+        ctx._setText(value);
+      }
     }
 
     if (ctx._oldValue != value) {

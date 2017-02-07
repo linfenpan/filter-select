@@ -31,10 +31,10 @@ module.exports = {
       .pipe(concat, name + '.js')
       .pipe(header, textHeader)
       .pipe(footer, textFooter)
+      .pipe(gulp.dest, `${this.dist}`)
       .pipe(replace, /(_+\w+?)\b/g, (str, key) => {
         return '_f' + fnAutoKey(key);
       })
-      .pipe(gulp.dest, `${this.dist}`)
       .pipe(uglify, {
         preserveComments: 'some'
       })
