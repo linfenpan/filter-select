@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.0 update:2017/2/7 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.0 update:2017/2/10 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
@@ -559,6 +559,18 @@ FilterSelect.prototype = {
       addClass($root, '.m-inline-select');
 
       var options = ctx.options;
+
+      var callbackSelectFn = function(key, text) {
+        $select.value = key;
+      };
+      if (options.callbackSelect) {
+        var oldCallbackSelectFn = options.callbackSelect;
+        options.callbackSelect = function(key, text) {
+          callbackSelectFn.call(this, key, text);
+          oldCallbackSelectFn.call(this, key, text);
+        }
+      }
+
       ctx._auto = auto = new AutoComplete($root, merge({
         data: options.data || function(value, callback) {
           var result = [], datas = ctx._list;

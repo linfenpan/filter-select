@@ -48,6 +48,18 @@ FilterSelect.prototype = {
       addClass($root, '.m-inline-select');
 
       var options = ctx.options;
+
+      var callbackSelectFn = function(key, text) {
+        $select.value = key;
+      };
+      if (options.callbackSelect) {
+        var oldCallbackSelectFn = options.callbackSelect;
+        options.callbackSelect = function(key, text) {
+          callbackSelectFn.call(this, key, text);
+          oldCallbackSelectFn.call(this, key, text);
+        }
+      }
+
       ctx._auto = auto = new AutoComplete($root, merge({
         data: options.data || function(value, callback) {
           var result = [], datas = ctx._list;

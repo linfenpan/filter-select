@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.0 update:2017/2/7 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.0 update:2017/2/10 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
