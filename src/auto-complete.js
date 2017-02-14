@@ -327,8 +327,9 @@ AutoComplete.prototype = {
       ctx._hidePlaceholder();
     }
 
-    if (ctx.length == 0 && !ctx.options.freeInput || value === '') {
+    if (ctx.length == 0 && !ctx.options.freeInput || ctx.options.freeInput && value === '') {
       var html = ctx.$tip.innerHTML;
+      // 如果自由输入，而且 value === ''
       if (ctx.options.freeInput && value === '') {
         ctx.$value.value = html;
       }
@@ -416,7 +417,7 @@ AutoComplete.prototype = {
       value = ctx.getValue();
     if (ctx._oldValue !== value) {
       ctx._oldValue = value;
-      ctx.options.callbackSelect(value, trim(ctx.$input.value));
+      ctx.options.callbackSelect(value, trim(ctx.$tip.innerHTML));
     }
   }
 };

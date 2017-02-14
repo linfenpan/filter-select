@@ -17,7 +17,7 @@ FilterSelect.prototype = {
       $select = ctx.$select;
 
     var $options = getElementsByTagName($select, 'option');
-    var valueSelected;
+    var valueSelected, valueSelectedText;
     var list = [];
 
     forEach($options, function($option) {
@@ -31,13 +31,14 @@ FilterSelect.prototype = {
 
       if ($option.selected) {
         valueSelected = value;
+        valueSelectedText = text;
       }
     });
 
     ctx._list = list;
-    ctx._buildAutoComplete(valueSelected || '');
+    ctx._buildAutoComplete(valueSelected || '', valueSelectedText || '');
   },
-  _buildAutoComplete: function(valueSelected) {
+  _buildAutoComplete: function(valueSelected, valueSelectedText) {
     var ctx = this, auto = ctx._auto;
 
     if (!auto) {
@@ -71,6 +72,7 @@ FilterSelect.prototype = {
           }
           callback(result);
         },
+        placeholder: options.placeholder || valueSelectedText,
         freeInput: false,
         selectFirst: true,
         clearAtFocus: true,
