@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.0 update:2017/2/14 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.0 update:2017/5/17 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
@@ -409,11 +409,15 @@ AutoComplete.prototype = {
   },
 
   setValue: function(value) {
+    // @notice 如果删掉 setValue 时，自动修复 text 的动作，就可以更加灵活了
     var ctx = this;
     ctx.$value.value = value;
     if (value) {
       ctx._hidePlaceholder();
     }
+
+    // @fix 防止初始化无法找到对应的 data-value 值
+    ctx._buildLi('');
 
     if (ctx.length == 0 && !ctx.options.freeInput || ctx.options.freeInput && value === '') {
       var html = ctx.$tip.innerHTML;
@@ -440,6 +444,7 @@ AutoComplete.prototype = {
           break;
         }
       }
+
       // value 值，不存在 data-value 属性中
       if (!hasFindInLi) {
         ctx._setText(value);

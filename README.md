@@ -1,7 +1,7 @@
 # filter-select.js
 
 不依赖任何脚本库，兼容 ie7+/chrome/firefox 等浏览器。
-基于同项目下的 auto-complete.js 编写。
+基于同项目下的 auto-complete.js[不支持异步更新数据] 编写。
 
 filter-select.js，主要是把 select 元素，更替为可输入进行筛选的组件。
 用法:

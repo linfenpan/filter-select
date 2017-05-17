@@ -13,31 +13,31 @@
   <div style="height:500px;margin:20px;">
     <!-- option必须带有 value 的值 -->
     <select id="magicsuggest" autocomplete="off">
-      <option>物种生存1</option>
-      <option>天天暴走</option>
-      <option>叉神2</option>
-      <option>abc3</option>
-      <option>bbc1</option>
-      <option>dds2</option>
-      <option>奇怪3</option>
-      <option>背包1</option>
-      <option>浏览器2</option>
-      <option>SKD3</option>
-      <option>你好a</option>
-      <option>学生big</option>
-      <option>老师c</option>
-      <option>宠物d</option>
-      <option>老人</option>
-      <option>物理数据</option>
-      <option>天才</option>
-      <option>生物老师</option>
-      <option>宝宝</option>
-      <option>齐心怪状</option>
+      <option value="1">物种生存1</option>
+      <option value="2">天天暴走</option>
+      <option value="3">叉神2</option>
+      <option value="4">abc3</option>
+      <option value="5">bbc1</option>
+      <option value="6">dds2</option>
+      <option value="7">奇怪3</option>
+      <option value="8">背包1</option>
+      <option value="9">浏览器2</option>
+      <option value="10">SKD3</option>
+      <option value="11">你好a</option>
+      <option value="12">学生big</option>
+      <option value="13">老师c</option>
+      <option value="14">宠物d</option>
+      <option value="15">老人</option>
+      <option value="16">物理数据</option>
+      <option value="17">天才</option>
+      <option value="18">生物老师</option>
+      <option value="19">宝宝</option>
+      <option value="20">齐心怪状</option>
     </select>
     <input class="button" type="button" value="点击" onclick="console.log(111, s.getValue())" />
     <input type="text" autocomplete="off" />
   </div>
-  <script src="./dist/filter-select.min.js"></script>
+  <script src="./dist/filter-select.js"></script>
   <script>
     var s = new FilterSelect(document.getElementById('magicsuggest'), {
       callbackSelect: function(key, text) {
