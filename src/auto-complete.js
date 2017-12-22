@@ -16,9 +16,13 @@ function AutoComplete($root, options) {
     defaultValue: '',
     defaultText: '',
     selectFirst: true,
-    freeInput: true,
+    freeInput: true,      // freeInput = true 时，defaultValue 和 defaultText 的值，一致。defaultText 的值，覆盖掉 defaultValue 的
     minIndex: -1
   }, options || {});
+
+  if (options.freeInput) {
+    options.defaultValue = options.defaultText;
+  }
 
   $root.innerHTML = [
     '<div class="m-placeholder" style="display:none;"></div>',
@@ -57,13 +61,11 @@ AutoComplete.prototype = {
     ctx._showPlaceholder();
     css(ctx.$ul, { display: 'none' });
 
-    var options = ctx.options,
-      defaultText = options.defaultText,
-      defaultValue = options.defaultValue;
-    ctx.$input.value = defaultText;
-    ctx.$value.value = defaultValue;
-    if (defaultText) {
-      ctx.setPlaceholder(defaultText);
+    var options = ctx.options;
+    var defaultValue = options.defaultValue;
+
+    if (defaultValue) {
+      ctx.setValue(defaultValue);
     }
   },
 
@@ -371,7 +373,7 @@ AutoComplete.prototype = {
   _setText: function(text) {
     var ctx = this, $input = ctx.$input, placeholder = ctx.options.placeholder;
     if (text === placeholder) {
-      text = '';
+      // text = '';
     } else if (text) {
       placeholder = text;
     }

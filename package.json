@@ -1,6 +1,6 @@
 {
   "name": "browser-filter-select.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "可筛选的下拉框",
   "main": "index.js",
   "scripts": {

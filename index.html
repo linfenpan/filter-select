@@ -42,6 +42,9 @@
     ];
 
     var s = new AutoComplete(document.getElementById('auto'), {
+      defaultValue: 18,
+      defaultText: '老人家3',
+
       data: function(value, callback) {
         var result = [];
         for (var i = 0, max = data.length; i < max; i++) {
@@ -64,9 +67,9 @@
       callbackHide: function() {
         console.log('hide');
       },
-      freeInput: true,
+      freeInput: false,
       selectFirst: false,
-      clearAtFocus: true
+      clearAtFocus: true,
     });
 
     // 通过 s.getValue() 获取到正确的值

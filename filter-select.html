@@ -13,6 +13,7 @@
   <div style="height:500px;margin:20px;">
     <!-- option必须带有 value 的值 -->
     <select id="magicsuggest" autocomplete="off">
+      <option value="0">不限</option>
       <option value="1">物种生存1</option>
       <option value="2">天天暴走</option>
       <option value="3">叉神2</option>
@@ -25,7 +26,7 @@
       <option value="10">SKD3</option>
       <option value="11">你好a</option>
       <option value="12">学生big</option>
-      <option value="13">老师c</option>
+      <option value="13" selected>老师c</option>
       <option value="14">宠物d</option>
       <option value="15">老人</option>
       <option value="16">物理数据</option>
@@ -40,6 +41,7 @@
   <script src="./dist/filter-select.js"></script>
   <script>
     var s = new FilterSelect(document.getElementById('magicsuggest'), {
+      placeholder: '请选择',
       callbackSelect: function(key, text) {
         console.log('选中:' + key + '/' + text);
       },

@@ -72,6 +72,8 @@ FilterSelect.prototype = {
           }
           callback(result);
         },
+        defaultText: valueSelectedText,
+        defaultValue: valueSelected,
         placeholder: options.placeholder || valueSelectedText,
         freeInput: false,
         selectFirst: true,
@@ -82,8 +84,6 @@ FilterSelect.prototype = {
       css(auto.$ico, { display: 'block' });
       css($select, { display: 'none' });
     }
-
-    auto.setValue(valueSelected);
   },
   getValue: function() {
     return this._auto.getValue();
