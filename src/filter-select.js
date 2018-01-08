@@ -46,7 +46,7 @@ FilterSelect.prototype = {
       var $select = ctx.$select;
 
       $select.parentNode.insertBefore($root, $select);
-      addClass($root, '.m-inline-select');
+      addClass($root, 'm-inline-select');
 
       var options = ctx.options;
 

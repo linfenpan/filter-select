@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.1 update:2017/12/22 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.1 update:2018/1/8 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
@@ -565,7 +565,7 @@ FilterSelect.prototype = {
       var $select = ctx.$select;
 
       $select.parentNode.insertBefore($root, $select);
-      addClass($root, '.m-inline-select');
+      addClass($root, 'm-inline-select');
 
       var options = ctx.options;
 
