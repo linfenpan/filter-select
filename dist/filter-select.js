@@ -522,7 +522,7 @@ AutoComplete.prototype = {
 function FilterSelect($select, options) {
   var ctx = this;
   ctx.$select = $select;
-  ctx.options = options || {};
+  ctx.options = merge({ callbackSelect: function() {} }, options || {});
   this._init();
 }
 
@@ -572,12 +572,10 @@ FilterSelect.prototype = {
       var callbackSelectFn = function(key, text) {
         $select.value = key;
       };
-      if (options.callbackSelect) {
-        var oldCallbackSelectFn = options.callbackSelect;
-        options.callbackSelect = function(key, text) {
-          callbackSelectFn.call(this, key, text);
-          oldCallbackSelectFn.call(this, key, text);
-        }
+      var oldCallbackSelectFn = options.callbackSelect;
+      options.callbackSelect = function(key, text) {
+        callbackSelectFn.call(this, key, text);
+        oldCallbackSelectFn.call(this, key, text);
       }
 
       ctx._auto = auto = new AutoComplete($root, merge({
