@@ -3,7 +3,7 @@
 function FilterSelect($select, options) {
   var ctx = this;
   ctx.$select = $select;
-  ctx.options = merge({ callbackSelect: function() {} }, options || {});
+  ctx.options = merge({ watchSelect: true, callbackSelect: function() {} }, options || {});
   this._init();
 }
 
@@ -81,7 +81,16 @@ FilterSelect.prototype = {
 
       css(auto.$ico, { display: 'block' });
       css($select, { display: 'none' });
+      if (options.watchSelect) {
+        ctx._watchSelect();
+      }
     }
+  },
+  _watchSelect: function() {
+    var ctx = this;
+    addEvent(ctx.$select, 'change', function() {
+      ctx.setValue(this.value);
+    });
   },
   getValue: function() {
     return this._auto.getValue();

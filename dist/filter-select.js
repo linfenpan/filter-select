@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.2 update:2018/1/8 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.3 update:2018/1/9 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
@@ -522,7 +522,7 @@ AutoComplete.prototype = {
 function FilterSelect($select, options) {
   var ctx = this;
   ctx.$select = $select;
-  ctx.options = merge({ callbackSelect: function() {} }, options || {});
+  ctx.options = merge({ watchSelect: true, callbackSelect: function() {} }, options || {});
   this._init();
 }
 
@@ -600,7 +600,16 @@ FilterSelect.prototype = {
 
       css(auto.$ico, { display: 'block' });
       css($select, { display: 'none' });
+      if (options.watchSelect) {
+        ctx._watchSelect();
+      }
     }
+  },
+  _watchSelect: function() {
+    var ctx = this;
+    addEvent(ctx.$select, 'change', function() {
+      ctx.setValue(this.value);
+    });
   },
   getValue: function() {
     return this._auto.getValue();
