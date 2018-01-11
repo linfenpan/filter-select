@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.3 update:2018/1/9 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.4 update:2018/1/11 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
@@ -152,7 +152,7 @@ AutoComplete.prototype = {
     var options = ctx.options;
     var defaultValue = options.defaultValue;
 
-    if (defaultValue) {
+    if (defaultValue != null) {
       ctx.setValue(defaultValue);
     }
   },

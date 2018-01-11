@@ -64,7 +64,7 @@ AutoComplete.prototype = {
     var options = ctx.options;
     var defaultValue = options.defaultValue;
 
-    if (defaultValue) {
+    if (defaultValue != null) {
       ctx.setValue(defaultValue);
     }
   },
