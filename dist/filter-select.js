@@ -480,6 +480,12 @@ AutoComplete.prototype = {
       if (ctx.options.freeInput && value === '') {
         ctx.$value.value = html;
       }
+      
+      // 允许输入空值
+      if (ctx.options.emptyInput && value === '') {
+        html = '';
+      }
+
       ctx._setText(html);
     } else {
       if (ctx.$lis) {
