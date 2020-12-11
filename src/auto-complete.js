@@ -364,6 +364,10 @@ AutoComplete.prototype = {
     ctx.isShow = true;
   },
 
+  getText: function() {
+    return this.$input.value;
+  },
+
   getValue: function() {
     return this.$value.value;
   },
