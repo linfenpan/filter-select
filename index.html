@@ -8,6 +8,7 @@
     .m-input-select, .button { vertical-align: middle; }
   </style>
   <link href="./dist/filterSelect.css" rel="stylesheet" />
+  <!-- <link href="./src/filterSelect.css" rel="stylesheet" /> -->
 </head>
 <body>
   <div style="height:500px;margin:20px;">
@@ -17,6 +18,8 @@
   </div>
   <div style="height:400px;"></div>
   <script src="./dist/auto-complete.js"></script>
+  <!-- <script src="./src/common.js"></script>
+  <script src="./src/auto-complete.js"></script> -->
   <script>
     var data = [
       { id: 1, value: '天天1' },
@@ -42,8 +45,7 @@
     ];
 
     var s = new AutoComplete(document.getElementById('auto'), {
-      defaultValue: 18,
-      defaultText: '老人家3',
+      placeholder: '不限',
 
       data: function(value, callback) {
         var result = [];
@@ -67,9 +69,12 @@
       callbackHide: function() {
         console.log('hide');
       },
-      freeInput: false,
-      selectFirst: false,
-      clearAtFocus: true,
+      emptyInput: false,  // 是否允许输入空值
+      resetOnHide: true, // 每当隐藏时，重置选中的内容
+      freeInput: false,  // 自由输入
+      selectFirst: true, // 默认选中第一个，配套 defaultValue 和 defaultText 使用
+      clearAtFocus: true, // 每次聚焦时，清空输入内容吗
+      changeAsSelect: false // 改变则立即选中（键盘的上下键选中哈~），适配某些快速选中的场景
     });
 
     // 通过 s.getValue() 获取到正确的值

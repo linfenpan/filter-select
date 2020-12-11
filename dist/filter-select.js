@@ -1,4 +1,4 @@
-/*! by da宗熊 MIT v1.0.4 update:2018/1/11 git:https://github.com/linfenpan/filter-select */
+/*! by da宗熊 MIT v1.0.5 update:2020/12/11 git:https://github.com/linfenpan/filter-select */
 
 ;(function(ctx, name, defination) {
   ctx[name] = defination(ctx);
@@ -103,8 +103,10 @@ function AutoComplete($root, options) {
     placeholder: '请选择',
     defaultValue: '',
     defaultText: '',
+    emptyInput: false, // 允许输入空字符串吗
+    changeAsSelect: false, // 索引改变后，就立即选中
     selectFirst: true,
-    freeInput: true,      // freeInput = true 时，defaultValue 和 defaultText 的值，一致。defaultText 的值，覆盖掉 defaultValue 的
+    freeInput: true,   // freeInput = true 时，defaultValue 和 defaultText 的值，一致。defaultText 的值，覆盖掉 defaultValue 的
     minIndex: -1
   }, options || {});
 
@@ -130,7 +132,7 @@ function AutoComplete($root, options) {
   ctx._minIndex = options.minIndex;
   ctx._oldText = options.defaultText;
   ctx._oldValue = options.defaultValue;
-
+  
   ctx._init();
 }
 
@@ -146,6 +148,7 @@ AutoComplete.prototype = {
     ctx._index = 0;
     ctx.isShow = false;
     ctx.setPlaceholder(ctx.options.placeholder);
+
     ctx._showPlaceholder();
     css(ctx.$ul, { display: 'none' });
 
@@ -207,18 +210,30 @@ AutoComplete.prototype = {
       changeInput.call(this, e);
     });
 
+    var Code_Up = 38, Code_Down = 40;
+    var keydownTimespace = 0;
+
     // 绑定input的键盘事件
     addEvent($input, 'keydown', function(e) {
       if (!canShow()) { return; }
 
+      keydownTimespace = new Date;
+
       var hadChagned = false;
       var shouldStopDefault = false;
-      switch(e.keyCode){
-        case 38:
+
+      var keyCode = e.keyCode;
+      
+      if (ctx.options.changeAsSelect && (keyCode === Code_Up || keyCode === Code_Down)) {
+        ctx._lockLis = true;
+      }
+
+      switch(keyCode){
+        case Code_Up:
           ctx.prev();
           hadChagned = true;
           break;
-        case 40:
+        case Code_Down:
           ctx.next();
           hadChagned = true;
           break;
@@ -253,8 +268,22 @@ AutoComplete.prototype = {
       if (e.propertyName && e.propertyName.toLowerCase() != 'value') {
         return;
       }
+      
+      var ignoreOnceLockLis = false;
+      // keydown 改变value的时候，会强制触发一次 propertychange
+      if (e.type === 'propertychange') {
+        if (new Date - keydownTimespace <= 10) {
+          ignoreOnceLockLis = true;
+        }
+      }
+
+      if (!ignoreOnceLockLis) {
+        ctx._lockLis = false;
+      }
+
       if (!canShow()) { return; }
       var value = trim($input.value);
+      
       if (value) {
         ctx._hidePlaceholder();
       } else {
@@ -271,6 +300,8 @@ AutoComplete.prototype = {
 
   _buildLi: function(value) {
     var ctx = this, options = ctx.options, freeInput = options.freeInput;
+    if (ctx._lockLis) { return; }
+
     var list = [];
     options.data.call(this, value, function(datas) {
       forEach(datas, function(item) {
@@ -331,6 +362,10 @@ AutoComplete.prototype = {
       ctx._fixScroll();
     }
     ctx._index = index;
+
+    if (ctx.options.changeAsSelect) {
+      ctx._selectItem(ctx.$lis[index]);
+    }
   },
 
   _selectItem: function($li) {
@@ -341,6 +376,9 @@ AutoComplete.prototype = {
     } else {
       if (ctx.options.freeInput) {
         value = ctx.$input.value;
+      } else if (ctx.options.emptyInput) {
+        // 已经允许输入空字符串了
+        value = '';
       } else {
         value = ctx.$value.value;
       }
@@ -382,12 +420,17 @@ AutoComplete.prototype = {
 
   hide: function() {
     var ctx = this;
+    ctx._lockLis = false;
 
     css(ctx.$ul, { display: 'none' });
     ctx._hidePlaceholder();
 
     if (ctx.options.resetOnHide) {
-      ctx.setValue(ctx.$value.value);
+      if (ctx.options.emptyInput && ctx.$input.value === '') {
+        ctx.setValue('');
+      } else {
+        ctx.setValue(ctx.$value.value);
+      }
     }
 
     ctx._doCallback();
@@ -398,6 +441,9 @@ AutoComplete.prototype = {
 
   show: function(indexSelected) {
     var ctx = this;
+    ctx._lockLis = false;
+
+    ctx._buildLi(ctx.$input.value);
     css(ctx.$ul, { display: 'block' });
 
     // 绑定 body 元素的点击，隐藏掉$ul
@@ -462,9 +508,12 @@ AutoComplete.prototype = {
     var ctx = this, $input = ctx.$input, placeholder = ctx.options.placeholder;
     if (text === placeholder) {
       // text = '';
+    } else if (ctx.options.emptyInput) {
+      // placeholder 保持原型
     } else if (text) {
       placeholder = text;
     }
+
     $input.value = text;
     ctx.setPlaceholder(placeholder);
     text ? ctx._hidePlaceholder() : ctx._showPlaceholder();
@@ -512,7 +561,11 @@ AutoComplete.prototype = {
       value = ctx.getValue();
     if (ctx._oldValue !== value) {
       ctx._oldValue = value;
-      ctx.options.callbackSelect(value, trim(ctx.$tip.innerHTML));
+      var text = trim(ctx.$tip.innerHTML);
+      if (ctx.options.emptyInput) {
+        text = ctx.$input.value;
+      }
+      ctx.options.callbackSelect(value, text);
     }
   }
 };

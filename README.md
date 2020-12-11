@@ -21,3 +21,7 @@ var s = new FilterSelect(document.getElementsByTagName('select')[0], {
 
 建议 select 的 option，都带上 value 属性，或都不带上。
 给 select 元素，设置 autocomplete="off" 属性，防止浏览器自动补全，带来不必要的问题。
+
+
+# 修改历史
+- 1.0.5: 增加允许输入空字符串的控制参数，`emptyInput: false`, `lockWhenKeyboardSelect: false`，auto-complte组件的样式有微弱的调整。
