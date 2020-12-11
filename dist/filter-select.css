@@ -9,7 +9,7 @@
 .m-auto-complete .m-list-item { cursor: default; padding: 5px; margin-top: -1px; list-style: none; background: #fff; border:1px solid #ddd; border-bottom: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .m-auto-complete .m-list-item:hover { background: #2D95FF; }
 .m-auto-complete .m-list-item-active { background: #2D95FF; }
-.m-input::-ms-clear, .m-input::-ms-reveal { display: none; }
+.m-auto-complete .m-input::-ms-clear, .m-auto-complete .m-input::-ms-reveal { display: none; }
 .m-inline-select .m-input { padding-right: 22px; }
 .m-inline-select .m-placeholder{ margin-right: 22px; }
 .m-inline-select .m-input-ico { position: absolute; right: 0; top: 0; width: 22px; height: 100%; background: url(./filter-select-icon.png) no-repeat 50% 50%; }

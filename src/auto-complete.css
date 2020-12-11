@@ -8,4 +8,4 @@
 .m-auto-complete .m-list-item { cursor: default; padding: 5px; margin-top: -1px; list-style: none; background: #fff; border:1px solid #ddd; border-bottom: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .m-auto-complete .m-list-item:hover { background: #2D95FF; }
 .m-auto-complete .m-list-item-active { background: #2D95FF; }
-.m-input::-ms-clear, .m-input::-ms-reveal { display: none; }
+.m-auto-complete .m-input::-ms-clear, .m-auto-complete .m-input::-ms-reveal { display: none; }
