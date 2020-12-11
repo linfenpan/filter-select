@@ -1,8 +1,15 @@
 /*! by da宗熊 MIT v1.0.5 update:2020/12/11 git:https://github.com/linfenpan/filter-select */
 
-;(function(ctx, name, defination) {
-  ctx[name] = defination(ctx);
-})(window, 'FilterSelect', function(win) {
+;(function(root, name, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    // node, commonjs
+    module.exports = factory(root);
+  } else {
+    root[name] = factory(root);
+  }
+})(this || window, 'FilterSelect', function(win) {
 
 var NOT_DEFINED = void 0;
 

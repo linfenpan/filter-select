@@ -18,9 +18,16 @@ module.exports = {
   banner,
   getJsTranform(name, fnName) {
     const textHeader = `${banner}\n
-;(function(ctx, name, defination) {
-  ctx[name] = defination(ctx);
-})(window, '${fnName}', function(win) {\n\n`;
+;(function(root, name, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    // node, commonjs
+    module.exports = factory(root);
+  } else {
+    root[name] = factory(root);
+  }
+})(this || window, '${fnName}', function(win) {\n\n`;
 
     const textFooter = `\n\n
     return ${fnName};

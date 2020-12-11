@@ -24,4 +24,4 @@ var s = new FilterSelect(document.getElementsByTagName('select')[0], {
 
 
 # 修改历史
-- 1.0.5: 增加允许输入空字符串的控制参数，`emptyInput: false`, `lockWhenKeyboardSelect: false`，auto-complte组件的样式有微弱的调整。
+- 1.0.5: 增加允许输入空字符串的控制参数，`emptyInput: false`, `lockWhenKeyboardSelect: false`，auto-complte组件的样式有微弱的调整，脚本整体包裹了 umd 规范，调整了样式名称，删除了旧版本的filterSelect.js

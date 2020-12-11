@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>可输入下拉框v2.0</title>
+  <style>
+    * { padding: 0; margin: 0;  }
+    .m-input-select, .button { vertical-align: middle; }
+  </style>
+  <link href="./dist/auto-complete.css" rel="stylesheet" />
+  <!-- <link href="./src/filterSelect.css" rel="stylesheet" /> -->
+</head>
+<body>
+  <div style="height:500px;margin:20px;">
+    <div id="auto"></div>
+    <input class="button" type="button" value="点击" onclick="console.log(111, s.getValue())" />
+    <input type="text" autocomplete="off" />
+  </div>
+  <div style="height:400px;"></div>
+  <script src="./dist/auto-complete.js"></script>
+  <!-- <script src="./src/common.js"></script>
+  <script src="./src/auto-complete.js"></script> -->
+  <script>
+    var data = [
+      { id: 1, value: '天天1' },
+      { id: 2, value: '天下2' },
+      { id: 3, value: '无论1' },
+      { id: 4, value: '暴走2' },
+      { id: 5, value: '娱乐1' },
+      { id: 6, value: '必要3' },
+      { id: 7, value: '老师1' },
+      { id: 8, value: '狮子3' },
+      { id: 9, value: '十字1' },
+      { id: 10, value: '很好3' },
+      { id: 11, value: '好不1' },
+      { id: 12, value: '好人2' },
+      { id: 13, value: '乐乐1' },
+      { id: 14, value: '不要1' },
+      { id: 15, value: '暴怒1' },
+      { id: 16, value: '暴徒14' },
+      { id: 17, value: '要不要21' },
+      { id: 18, value: '老人家3' },
+      { id: 19, value: '天晓得1423' },
+      { id: 20, value: '子说4' }
+    ];
+
+    var s = new AutoComplete(document.getElementById('auto'), {
+      placeholder: '不限',
+
+      data: function(value, callback) {
+        var result = [];
+        for (var i = 0, max = data.length; i < max; i++) {
+          var item = data[i];
+          if (item.value.indexOf(value) >= 0) {
+            result.push(item);
+          }
+        }
+        callback(result);
+      },
+      callbackSelect: function(key, text) {
+        console.log('选中:' + key + '/' + text);
+      },
+      callbackChange: function(index) {
+        console.log('当前选中:' + index);
+      },
+      callbackShow: function() {
+        console.log('show');
+      },
+      callbackHide: function() {
+        console.log('hide');
+      },
+      emptyInput: false,  // 是否允许输入空值
+      resetOnHide: true, // 每当隐藏时，重置选中的内容
+      freeInput: false,  // 自由输入
+      selectFirst: true, // 默认选中第一个，配套 defaultValue 和 defaultText 使用
+      clearAtFocus: true, // 每次聚焦时，清空输入内容吗
+      changeAsSelect: false // 改变则立即选中（键盘的上下键选中哈~），适配某些快速选中的场景
+    });
+
+    // 通过 s.getValue() 获取到正确的值
+  </script>
+</body>
+</html>
