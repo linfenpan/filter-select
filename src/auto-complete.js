@@ -33,7 +33,7 @@ function AutoComplete($root, options) {
     '<span class="m-input-ico" style="display:none;"></span>',
     '<ul class="m-list" style="display:none;"></ul>'
   ].join('');
-  addClass($root, 'm-input-select');
+  addClass($root, 'm-auto-complete');
 
   ctx.$input = getElementsByTagName($root, 'input', 0);
   ctx.$value = getElementsByTagName($root, 'input', 1);
