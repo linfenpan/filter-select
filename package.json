@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/linfenpan/filter-select#readme",
   "dependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-footer": "^1.0.5",
     "gulp-header": "^1.8.8",
